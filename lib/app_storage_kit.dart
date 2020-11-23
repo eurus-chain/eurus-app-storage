@@ -1,7 +1,3 @@
-library app_storage_kit;
+library dummy_package;
 
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
+export 'package:app_storage_kit/secure_storage.dart';
