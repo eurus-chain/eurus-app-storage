@@ -11,9 +11,7 @@ void main() {
 
   String nsVal1 = 'Normal Storage Val 1';
   String nsVal2 = 'Normal Storage Val 2';
-
-  String ssVal1 = 'Secure Storage Val 1';
-  String ssVal2 = 'Secure Storage Val 2';
+  
   group('Normal Storage CRUD', () {
     SharedPreferences.setMockInitialValues({});
 
