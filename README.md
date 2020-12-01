@@ -1,14 +1,67 @@
 # app_storage_kit
 
-A new Flutter package project.
+app_storage_kit is a plugin for application to use both Normal Storage (shared preferences) and Secure Storage (iOS: Keychain, Android: Keystore)
 
-## Getting Started
+Normal Storage provided by [shared_preferences](https://pub.dev/packages/shared_preferences)
 
-This project is a starting point for a Dart
-[package](https://flutter.dev/developing-packages/),
-a library module containing code that can be shared easily across
-multiple Flutter or Dart projects.
+Secure Storage provided by [flutter_secure_storage](https://pub.dev/packages/flutter_secure_storage)
 
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.dev/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+## Usage
+### Normal Storage
+```dart
+import 'package:app_storage_kit/normal_storage.dart';
+
+/// Set value "Value" with key "Key" into shared preferences
+///
+/// Returns [bool]
+/// Returns [true] indicates set value successful
+await NormalStorageKit().setValue("Value", "Key");
+
+/// Read value from shared preferences by key "Key" 
+///
+/// Returns [String]
+/// Returns [Null] if no value was found under [key]
+await NormalStorageKit().readValue("Key");
+
+/// Delete value in shared preferences by key "Key"
+///
+/// Returns [bool]
+/// Returns [true] indicates delete values successful 
+await NormalStorageKit().deleteValue("Key");
+
+/// Delete all values stored in shared preference
+///
+/// Returns [bool]
+/// Returns [true] indicates delete all values successful
+await NormalStorageKit().deleteAll();
+```
+### Secure Storage
+```dart
+import 'package:app_storage_kit/secure_storage.dart';
+
+/// Set value "Value" with key "Key" into keychain/keystore
+///
+/// Returns [bool]
+/// Returns [true] indicates set value successful
+await SecureStorageKit().setValue("Value", "Key");
+
+/// Read value from keychain/keystore by key "Key" 
+///
+/// Returns [String]
+/// Returns [Null] if no value was found under [key]
+await SecureStorageKit().readValue("Key");
+
+/// Delete value in keychain/keystore by key "Key"
+///
+/// Returns [bool]
+/// Returns [true] indicates delete values successful 
+await SecureStorageKit().deleteValue("Key");
+
+/// Delete all values stored in keychain/keystore
+///
+/// Returns [bool]
+/// Returns [true] indicates delete all values successful
+await SecureStorageKit().deleteAll();
+```
+## License
+[MIT](https://choosealicense.com/licenses/mit/)
