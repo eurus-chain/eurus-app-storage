@@ -53,9 +53,15 @@ class TestingPageObj {
   final _ssDeleteValBtn = find.byValueKey('ss_delete_val');
   final _ssClear = find.byValueKey('ss_clear');
 
+  final _dbAddValBtn = find.byValueKey('db_add_val');
+  final _dbReadValBtn = find.byValueKey('db_read_val');
+  final _dbDeleteValBtn = find.byValueKey('db_delete_val');
+  final _dbClear = find.byValueKey('db_clear');
+
   Future clearAll() async {
     await driver.tap(_nsClear);
     await driver.tap(_ssClear);
+    await driver.tap(_dbClear);
   }
 
   Future addValue() async {
@@ -63,16 +69,20 @@ class TestingPageObj {
     await driver.tap(_nsAddValBtn);
     await driver.tap(_ssAddValBtn);
     await driver.tap(_ssAddValBtn);
+    await driver.tap(_dbAddValBtn);
+    await driver.tap(_dbAddValBtn);
   }
 
   Future readValue() async {
     await driver.tap(_nsReadValBtn);
     await driver.tap(_ssReadValBtn);
+    await driver.tap(_dbReadValBtn);
   }
 
   Future deleteValue() async {
     await driver.tap(_nsDeleteValBtn);
     await driver.tap(_ssDeleteValBtn);
+    await driver.tap(_dbDeleteValBtn);
   }
 
   Future verifyValue() async {
@@ -80,10 +90,13 @@ class TestingPageObj {
         await driver.getText(find.byValueKey('ns-local-1')));
     expect(await driver.getText(find.byValueKey('ss-1')),
         await driver.getText(find.byValueKey('ss-local-1')));
+    expect(await driver.getText(find.byValueKey('db-1')),
+        await driver.getText(find.byValueKey('db-local-1')));
   }
 
   Future verifyValuNull() async {
     expect(await driver.getText(find.byValueKey('ns-1')), '1: null');
     expect(await driver.getText(find.byValueKey('ss-1')), '1: null');
+    expect(await driver.getText(find.byValueKey('db-1')), '1: null');
   }
 }

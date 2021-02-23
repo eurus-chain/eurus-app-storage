@@ -1,10 +1,16 @@
 import 'dart:math';
 
+import 'package:app_storage_kit/app_storage_kit.dart';
 import 'package:app_storage_kit/normal_storage.dart';
 import 'package:app_storage_kit/secure_storage.dart';
+import 'package:app_storage_kit/db_storage.dart';
 import 'package:flutter/material.dart';
 
+import 'dummy_data_models.dart';
+
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
   runApp(MyApp());
 }
 
@@ -30,6 +36,24 @@ class AppStorageKitDemoState extends State<AppStorageKitDemo> {
   Map<String, String> _nstorage = {};
   Map<String, String> _localSstorage = {};
   Map<String, String> _sstorage = {};
+  Map<String, String> _localDstorage = {};
+  Map<String, String> _dstorage = {};
+
+  DatabaseStorageKit _db;
+
+  @override
+  void initState() {
+    DBTableModel table = DBTableModel(
+      tableName: 'testing_table',
+      fields: [
+        TableFieldModel(name: 'id', type: 'TEXT', isPK: true),
+        TableFieldModel(name: 'value', type: 'TEXT'),
+      ],
+    );
+    _db = DatabaseStorageKit(table: table);
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,119 +61,210 @@ class AppStorageKitDemoState extends State<AppStorageKitDemo> {
       appBar: AppBar(
         title: Text('App Storage Kit Demo'),
       ),
-      body: Container(
-        padding: EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Normal Storage Test",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            Padding(padding: EdgeInsets.only(top: 10)),
-            Row(
-              children: [
-                Expanded(
-                  child: FlatButton(
-                    key: Key('ns_add_val'),
-                    child: Text("Add All"),
-                    onPressed: _nsAddVal,
-                  ),
+      body: SafeArea(
+        child: Container(
+          padding: EdgeInsets.all(10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  children: [
+                    Text(
+                      "Normal Storage Test",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    Padding(padding: EdgeInsets.only(top: 10)),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: FlatButton(
+                            key: Key('ns_add_val'),
+                            child: Text("Add All"),
+                            onPressed: _nsAddVal,
+                          ),
+                        ),
+                        Expanded(
+                          child: FlatButton(
+                            key: Key('ns_read_val'),
+                            child: Text("Read All"),
+                            onPressed: _nsReadVal,
+                          ),
+                        ),
+                        Expanded(
+                          child: FlatButton(
+                            key: Key('ns_delete_val'),
+                            child: Text("Delete All"),
+                            onPressed: _nsDeleteVal,
+                          ),
+                        ),
+                        Expanded(
+                          child: FlatButton(
+                            key: Key('ns_clear'),
+                            child: Text("Clear"),
+                            onPressed: _nsClear,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: this
+                                    .genTextArray(_localNstorage, 'ns-local'),
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: this.genTextArray(_nstorage, 'ns'),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    Padding(padding: EdgeInsets.only(top: 10)),
+                  ],
                 ),
-                Expanded(
-                  child: FlatButton(
-                    key: Key('ns_read_val'),
-                    child: Text("Read All"),
-                    onPressed: _nsReadVal,
-                  ),
+              ),
+              Expanded(
+                child: Column(
+                  children: [
+                    Text(
+                      "Secure Storage Test",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    Padding(padding: EdgeInsets.only(top: 10)),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: FlatButton(
+                            key: Key('ss_add_val'),
+                            child: Text("Add All"),
+                            onPressed: _ssAddVal,
+                          ),
+                        ),
+                        Expanded(
+                          child: FlatButton(
+                            key: Key('ss_read_val'),
+                            child: Text("Read All"),
+                            onPressed: _ssReadVal,
+                          ),
+                        ),
+                        Expanded(
+                          child: FlatButton(
+                            key: Key('ss_delete_val'),
+                            child: Text("Delete All"),
+                            onPressed: _ssDeleteVal,
+                          ),
+                        ),
+                        Expanded(
+                          child: FlatButton(
+                            key: Key('ss_clear'),
+                            child: Text("Clear"),
+                            onPressed: _ssClear,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: this
+                                    .genTextArray(_localSstorage, 'ss-local'),
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: this.genTextArray(_sstorage, 'ss'),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                Expanded(
-                  child: FlatButton(
-                    key: Key('ns_delete_val'),
-                    child: Text("Delete All"),
-                    onPressed: _nsDeleteVal,
-                  ),
+              ),
+              Expanded(
+                child: Column(
+                  children: [
+                    Text(
+                      "Database Storage Test",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    Padding(padding: EdgeInsets.only(top: 10)),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: FlatButton(
+                            key: Key('db_add_val'),
+                            child: Text("Add All"),
+                            onPressed: _dbAddVal,
+                          ),
+                        ),
+                        Expanded(
+                          child: FlatButton(
+                            key: Key('db_read_val'),
+                            child: Text("Read All"),
+                            onPressed: _dbReadVal,
+                          ),
+                        ),
+                        Expanded(
+                          child: FlatButton(
+                            key: Key('db_delete_val'),
+                            child: Text("Delete All"),
+                            onPressed: _dbDeleteVal,
+                          ),
+                        ),
+                        Expanded(
+                          child: FlatButton(
+                            key: Key('db_clear'),
+                            child: Text("Clear"),
+                            onPressed: _dbClear,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: this
+                                    .genTextArray(_localDstorage, 'db-local'),
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: this.genTextArray(_dstorage, 'db'),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                Expanded(
-                  child: FlatButton(
-                    key: Key('ns_clear'),
-                    child: Text("Clear"),
-                    onPressed: _nsClear,
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: this.genTextArray(_localNstorage, 'ns-local'),
-                  ),
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: this.genTextArray(_nstorage, 'ns'),
-                  ),
-                )
-              ],
-            ),
-            Padding(padding: EdgeInsets.only(top: 10)),
-            Text(
-              "Secure Storage Test",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            Padding(padding: EdgeInsets.only(top: 10)),
-            Row(
-              children: [
-                Expanded(
-                  child: FlatButton(
-                    key: Key('ss_add_val'),
-                    child: Text("Add All"),
-                    onPressed: _ssAddVal,
-                  ),
-                ),
-                Expanded(
-                  child: FlatButton(
-                    key: Key('ss_read_val'),
-                    child: Text("Read All"),
-                    onPressed: _ssReadVal,
-                  ),
-                ),
-                Expanded(
-                  child: FlatButton(
-                    key: Key('ss_delete_val'),
-                    child: Text("Delete All"),
-                    onPressed: _ssDeleteVal,
-                  ),
-                ),
-                Expanded(
-                  child: FlatButton(
-                    key: Key('ss_clear'),
-                    child: Text("Clear"),
-                    onPressed: _ssClear,
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: this.genTextArray(_localSstorage, 'ss-local'),
-                  ),
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: this.genTextArray(_sstorage, 'ss'),
-                  ),
-                )
-              ],
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -230,6 +345,49 @@ class AppStorageKitDemoState extends State<AppStorageKitDemo> {
     setState(() {
       _sstorage = {};
       _localSstorage = {};
+    });
+  }
+
+  void _dbAddVal() async {
+    String val = _randomValue();
+    String key = "key-${_localDstorage.length + 1}";
+    DummyRecordModel r = DummyRecordModel(id: key)..value = val;
+
+    await _db.setRecord(r);
+    setState(() {
+      _localDstorage.addAll({key: r.value});
+    });
+  }
+
+  void _dbReadVal() async {
+    this._localDstorage.forEach((key, value) async {
+      List<Map<String, dynamic>> vs =
+          await _db.getRecords(where: 'id = ?', whereArgs: [key]);
+
+      String val = vs.length > 0 && vs.first != null ? vs.first['value'] : null;
+
+      setState(() {
+        _dstorage.addAll({key: val});
+      });
+    });
+  }
+
+  void _dbDeleteVal() async {
+    this._localDstorage.forEach((key, value) async {
+      await _db.deleteRecord(where: 'id = ?', whereArgs: [key]);
+
+      setState(() {
+        _dstorage = {};
+      });
+    });
+  }
+
+  void _dbClear() async {
+    await _db.clearTable();
+
+    setState(() {
+      _dstorage = {};
+      _localDstorage = {};
     });
   }
 
