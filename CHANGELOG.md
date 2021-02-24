@@ -1,4 +1,6 @@
-## 0.0.1
-* Initialize Package
+## 0.0.3
++ Added Database Storage with sqflite
 ## 0.0.2 
 * Files formatted according to dartfmt
+## 0.0.1
+* Initialize Package

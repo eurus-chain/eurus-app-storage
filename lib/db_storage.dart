@@ -49,10 +49,21 @@ class DatabaseStorageKit {
     return response;
   }
 
-  Future<List<Map<String, dynamic>>> getRecords(
-      {String where, List<dynamic> whereArgs}) async {
-    List<Map<String, dynamic>> records =
-        await _db.query(table.tableName, where: where, whereArgs: whereArgs);
+  Future<List<Map<String, dynamic>>> getRecords({
+    String where,
+    List<dynamic> whereArgs,
+    int limit,
+    int offset,
+    String order,
+  }) async {
+    List<Map<String, dynamic>> records = await _db.query(
+      table.tableName,
+      where: where,
+      whereArgs: whereArgs,
+      orderBy: order,
+      limit: limit,
+      offset: offset,
+    );
 
     return records;
   }

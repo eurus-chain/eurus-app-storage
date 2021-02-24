@@ -6,6 +6,8 @@ Normal Storage provided by [shared_preferences](https://pub.dev/packages/shared_
 
 Secure Storage provided by [flutter_secure_storage](https://pub.dev/packages/flutter_secure_storage)
 
+Database Storage provided by [sqflite](https://pub.dev/packages/sqflite)
+
 ## Usage
 ### Normal Storage
 ```dart
@@ -62,6 +64,69 @@ await SecureStorageKit().deleteValue("Key");
 /// Returns [bool]
 /// Returns [true] indicates delete all values successful
 await SecureStorageKit().deleteAll();
+```
+### Database Storage
+#### Create table structure
+```dart
+import 'package:app_storage_kit/data_models/db_record.dart';
+import 'package:app_storage_kit/data_models/db_table_model.dart';
+
+/// Create record type extends DBRecord class
+class TestingRecordModel extends DBRecord {
+    TestingRecordModel({this.id, this.value}) : super(id: id);
+
+    final String id;
+    String value;
+
+    /// Convert data from JSON
+    @override
+    TestingRecordModel fromJson(Map<String, dynamic> r) => 
+        TestingRecordModel(
+            id: r['id'], 
+            value: r['value'],
+        );
+
+    /// Convert data to JSON
+    @override
+    Map<String, dynamic> toJson() => {
+        'id': id, 
+        'value': value
+    };
+}
+
+/// Set Table name and fields
+DBTableModel table = DBTableModel(
+    tableName: 'table_name',
+    fields: [
+    TableFieldModel(name: 'id', type: 'TEXT', isPK: true),
+    TableFieldModel(name: 'value', type: 'TEXT'),
+    ],
+);
+
+/// Open database with table
+DatabaseStorageKit _db = DatabaseStorageKit(table: table);
+
+/// Add value to table
+TestingRecordModel r = TestingRecordModel(id: 'key', value: 'val');
+await _db.setRecord(r);
+
+/// Get all values from table
+List<Map<String, dynamic>> records = await _db.getRecords();
+
+/// Get values with given condition
+List<Map<String, dynamic>> records = await _db.getRecords(where: 'id = ?', whereArgs: [key]);
+
+/// Update value
+///
+/// Record will be updated for using the same id
+r.value = 'val2';
+await _db.setRecord(r);
+
+/// Delete record with given condition
+await _db.deleteRecord(where: 'id = ?', whereArgs: [key]);
+
+/// Clear table
+await _db.clearTable();
 ```
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
