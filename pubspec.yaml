@@ -1,6 +1,6 @@
 name: app_storage_kit
 description: Flutter Plugin for using different storage types, including Normal Storage (Shared Preferences), Secure Storage (Keychain / Keystore) and Database
-version: 0.0.3
+version: 0.0.4
 homepage: https://www.goldhub.hk
 
 environment:

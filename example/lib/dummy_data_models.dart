@@ -6,9 +6,9 @@ class DummyRecordModel extends DBRecord {
   final String id;
   String value;
 
-  @override
-  DummyRecordModel fromJson(Map<String, dynamic> r) =>
-      DummyRecordModel(id: r['id'])..value = r['value'];
+  DummyRecordModel.fromJson(Map<String, dynamic> r)
+      : id = r['id'],
+        value = r['value'];
 
   @override
   Map<String, dynamic> toJson() => {'id': id, 'value': value};
