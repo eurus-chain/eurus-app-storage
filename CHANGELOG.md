@@ -1,3 +1,5 @@
+## 0.0.4+1
+* Fixed initialization bug
 ## 0.0.4
 * Minor bug fix
 ## 0.0.3
