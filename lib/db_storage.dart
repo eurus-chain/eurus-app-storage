@@ -14,7 +14,8 @@ class DatabaseStorageKit {
     _initDB().then((value) => _createTable(table));
   }
 
-  static Future<Null> _initDB() async {
+  /// Initialize Database
+  Future<Null> _initDB() async {
     _dbPath = await getDatabasesPath();
     _db = await openDatabase(_dbPath + 'appStorageDB.db', version: 1);
   }
@@ -41,6 +42,8 @@ class DatabaseStorageKit {
 
   /// Set / update record
   Future<int> setRecord(DBRecord r, {bool updateIfExists}) async {
+    if (!dbReady) await _initDB();
+
     int response = await _db.insert(table.tableName, r.toJson(),
         conflictAlgorithm: updateIfExists == false
             ? ConflictAlgorithm.abort
@@ -49,6 +52,7 @@ class DatabaseStorageKit {
     return response;
   }
 
+  /// Read records
   Future<List<Map<String, dynamic>>> getRecords({
     String where,
     List<dynamic> whereArgs,
@@ -56,6 +60,8 @@ class DatabaseStorageKit {
     int offset,
     String order,
   }) async {
+    if (!dbReady) await _initDB();
+
     List<Map<String, dynamic>> records = await _db.query(
       table.tableName,
       where: where,
@@ -70,6 +76,8 @@ class DatabaseStorageKit {
 
   /// Delete record
   Future<int> deleteRecord({String where, List<dynamic> whereArgs}) async {
+    if (!dbReady) await _initDB();
+
     int response =
         await _db.delete(table.tableName, where: where, whereArgs: whereArgs);
 
