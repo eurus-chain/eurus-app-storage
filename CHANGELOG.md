@@ -1,3 +1,6 @@
+## 0.0.5
+* Fixed init DB path bug
+* Added table scheme update migration
 ## 0.0.4+1
 * Fixed initialization bug
 ## 0.0.4
