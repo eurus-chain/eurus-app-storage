@@ -69,7 +69,7 @@ class DatabaseStorageKit {
     if (!dbReady) await initDB();
     int response = await _db.insert(table.tableName, r.toJson(),
         conflictAlgorithm: updateIfExists == false
-            ? ConflictAlgorithm.abort
+            ? ConflictAlgorithm.ignore
             : ConflictAlgorithm.replace);
 
     return response;
