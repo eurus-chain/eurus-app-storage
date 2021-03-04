@@ -13,7 +13,10 @@ class DBTableModel {
   final List<TableFieldModel> fields;
 
   /// Support only add new fields
+  @deprecated
   final List<TableFieldModel> orgFields;
+
+  String orgTableQuery;
 
   String get tableQuery => _genCreateTableQuery();
   String get migrateQuery => _genMigrateQuery();
@@ -36,16 +39,47 @@ class DBTableModel {
 
   // Generate SQL to update table
   String _genMigrateQuery() {
-    if (orgFields == null) return '';
+    if (orgTableQuery == null) return '';
 
-    String fields = '';
-    orgFields.forEach((e) {
-      fields += fields == '' ? e.name : ', ${e.name}';
+    Map<String, String> orgFields = _decodeOrgFields();
+    Map<String, String> newFields = {};
+
+    fields.forEach((e) {
+      newFields.addAll({e.name: e.name});
+    });
+
+    String fieldsToMigrate = '';
+    orgFields.forEach((key, v) {
+      if (newFields[v] != null)
+        fieldsToMigrate += fieldsToMigrate == '' ? v : ', $v';
     });
 
     String query =
-        'INSERT INTO $tableName($fields) SELECT $fields FROM old_$tableName';
+        'INSERT INTO $tableName($fieldsToMigrate) SELECT $fieldsToMigrate FROM old_$tableName';
 
     return query;
+  }
+
+  // Decode original table fields
+  Map<String, String> _decodeOrgFields() {
+    Map<String, String> fieldList = {};
+
+    RegExp onlyFieldsExp = RegExp(r'\((.+)\)');
+    var onlyFieldsMatchs = onlyFieldsExp.allMatches(orgTableQuery);
+
+    String match = onlyFieldsMatchs.elementAt(0).group(1);
+
+    match = match.replaceAll(' PRIMARY KEY', '');
+
+    RegExp removeTypeExp = RegExp(r'\s[A-Z]+');
+    String removedTypes = match.replaceAll(removeTypeExp, '');
+
+    List<String> fields = removedTypes.split(' ,');
+
+    fields.forEach((e) {
+      fieldList.addAll({e: e});
+    });
+
+    return fieldList;
   }
 }

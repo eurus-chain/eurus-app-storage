@@ -39,18 +39,20 @@ class DatabaseStorageKit {
 
     if (response.length <= 0) return false;
 
-    if (response[0]['sql'] != table.tableQuery) await _udpateTable();
+    if (response[0]['sql'] != table.tableQuery)
+      await _udpateTable(response[0]['sql']);
 
     return true;
   }
 
-  Future<bool> _udpateTable() async {
+  Future<bool> _udpateTable(String orgTableQuery) async {
     String tempOldTableName = 'old_${table.tableName}';
+    table..orgTableQuery = orgTableQuery;
 
     try {
       await _db.execute('DROP TABLE $tempOldTableName');
-    } catch (e, t) {
-      print('$e - $t');
+    } catch (e) {
+      // print('$e - $t');
     }
 
     await _db

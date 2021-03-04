@@ -1,3 +1,5 @@
+## 0.0.6
+* Improved table scheme migration method
 ## 0.0.5
 * Fixed init DB path bug
 * Added table scheme update migration
