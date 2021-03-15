@@ -1,3 +1,6 @@
+## 0.0.7
+* DB Storage insert data default handling ConflictAlgorithm.ignore => ConflictAlgorithm.replace
+* Added param in setRecord for selecting conflictAlgorithm
 ## 0.0.6
 * Improved table scheme migration method
 ## 0.0.5

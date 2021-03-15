@@ -65,12 +65,21 @@ class DatabaseStorageKit {
   }
 
   /// Set / update record
-  Future<int> setRecord(DBRecord r, {bool updateIfExists}) async {
+  Future<int> setRecord(
+    DBRecord r, {
+    bool updateIfExists,
+    ConflictAlgorithm conflictAlgorithm,
+  }) async {
     if (!dbReady) await initDB();
-    int response = await _db.insert(table.tableName, r.toJson(),
-        conflictAlgorithm: updateIfExists == false
-            ? ConflictAlgorithm.ignore
-            : ConflictAlgorithm.replace);
+    int response = await _db.insert(
+      table.tableName,
+      r.toJson(),
+      conflictAlgorithm: conflictAlgorithm != null
+          ? conflictAlgorithm
+          : updateIfExists == false
+              ? ConflictAlgorithm.ignore
+              : ConflictAlgorithm.replace,
+    );
 
     return response;
   }
