@@ -16,8 +16,8 @@ void main() {
     SharedPreferences.setMockInitialValues({});
 
     test('Set and read values into normal storage', () async {
-      String val1 = await NormalStorageKit().readValue(key1);
-      String val2 = await NormalStorageKit().readValue(key2);
+      String? val1 = await NormalStorageKit().readValue(key1);
+      String? val2 = await NormalStorageKit().readValue(key2);
       expect(val1, null);
       expect(val2, null);
       bool setState1 = await NormalStorageKit().setValue(nsVal1, key1);
@@ -31,8 +31,8 @@ void main() {
     });
 
     test('Delete values from normal storage', () async {
-      String val1 = await NormalStorageKit().readValue(key1);
-      String val2 = await NormalStorageKit().readValue(key2);
+      String? val1 = await NormalStorageKit().readValue(key1);
+      String? val2 = await NormalStorageKit().readValue(key2);
       expect(val1, nsVal1);
       expect(val2, nsVal2);
       bool delState1 = await NormalStorageKit().deleteValue(key1);

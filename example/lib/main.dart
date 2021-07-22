@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
 }
 
 class AppStorageKitDemo extends StatefulWidget {
-  AppStorageKitDemo({Key key}) : super(key: key);
+  AppStorageKitDemo({Key? key}) : super(key: key);
 
   @override
   AppStorageKitDemoState createState() => AppStorageKitDemoState();
@@ -39,7 +39,7 @@ class AppStorageKitDemoState extends State<AppStorageKitDemo> {
   Map<String, String> _localDstorage = {};
   Map<String, String> _dstorage = {};
 
-  DatabaseStorageKit _db;
+  late DatabaseStorageKit _db;
 
   @override
   void initState() {
@@ -79,28 +79,28 @@ class AppStorageKitDemoState extends State<AppStorageKitDemo> {
                     Row(
                       children: [
                         Expanded(
-                          child: FlatButton(
+                          child: TextButton(
                             key: Key('ns_add_val'),
                             child: Text("Add All"),
                             onPressed: _nsAddVal,
                           ),
                         ),
                         Expanded(
-                          child: FlatButton(
+                          child: TextButton(
                             key: Key('ns_read_val'),
                             child: Text("Read All"),
                             onPressed: _nsReadVal,
                           ),
                         ),
                         Expanded(
-                          child: FlatButton(
+                          child: TextButton(
                             key: Key('ns_delete_val'),
                             child: Text("Delete All"),
                             onPressed: _nsDeleteVal,
                           ),
                         ),
                         Expanded(
-                          child: FlatButton(
+                          child: TextButton(
                             key: Key('ns_clear'),
                             child: Text("Clear"),
                             onPressed: _nsClear,
@@ -145,28 +145,28 @@ class AppStorageKitDemoState extends State<AppStorageKitDemo> {
                     Row(
                       children: [
                         Expanded(
-                          child: FlatButton(
+                          child: TextButton(
                             key: Key('ss_add_val'),
                             child: Text("Add All"),
                             onPressed: _ssAddVal,
                           ),
                         ),
                         Expanded(
-                          child: FlatButton(
+                          child: TextButton(
                             key: Key('ss_read_val'),
                             child: Text("Read All"),
                             onPressed: _ssReadVal,
                           ),
                         ),
                         Expanded(
-                          child: FlatButton(
+                          child: TextButton(
                             key: Key('ss_delete_val'),
                             child: Text("Delete All"),
                             onPressed: _ssDeleteVal,
                           ),
                         ),
                         Expanded(
-                          child: FlatButton(
+                          child: TextButton(
                             key: Key('ss_clear'),
                             child: Text("Clear"),
                             onPressed: _ssClear,
@@ -210,28 +210,28 @@ class AppStorageKitDemoState extends State<AppStorageKitDemo> {
                     Row(
                       children: [
                         Expanded(
-                          child: FlatButton(
+                          child: TextButton(
                             key: Key('db_add_val'),
                             child: Text("Add All"),
                             onPressed: _dbAddVal,
                           ),
                         ),
                         Expanded(
-                          child: FlatButton(
+                          child: TextButton(
                             key: Key('db_read_val'),
                             child: Text("Read All"),
                             onPressed: _dbReadVal,
                           ),
                         ),
                         Expanded(
-                          child: FlatButton(
+                          child: TextButton(
                             key: Key('db_delete_val'),
                             child: Text("Delete All"),
                             onPressed: _dbDeleteVal,
                           ),
                         ),
                         Expanded(
-                          child: FlatButton(
+                          child: TextButton(
                             key: Key('db_clear'),
                             child: Text("Clear"),
                             onPressed: _dbClear,
@@ -282,11 +282,12 @@ class AppStorageKitDemoState extends State<AppStorageKitDemo> {
 
   void _nsReadVal() async {
     this._localNstorage.forEach((key, value) async {
-      String dummyVal = await NormalStorageKit().readValue(key);
+      String? dummyVal = await NormalStorageKit().readValue(key);
 
-      setState(() {
-        _nstorage.addAll({key: dummyVal});
-      });
+      if (dummyVal != null)
+        setState(() {
+          _nstorage.addAll({key: dummyVal});
+        });
     });
   }
 
@@ -321,11 +322,12 @@ class AppStorageKitDemoState extends State<AppStorageKitDemo> {
 
   void _ssReadVal() async {
     this._localSstorage.forEach((key, value) async {
-      String dummyVal = await SecureStorageKit().readValue(key);
+      String? dummyVal = await SecureStorageKit().readValue(key);
 
-      setState(() {
-        _sstorage.addAll({key: dummyVal});
-      });
+      if (dummyVal != null)
+        setState(() {
+          _sstorage.addAll({key: dummyVal});
+        });
     });
   }
 
@@ -354,9 +356,10 @@ class AppStorageKitDemoState extends State<AppStorageKitDemo> {
     DummyRecordModel r = DummyRecordModel(id: key)..value = val;
 
     await _db.setRecord(r);
-    setState(() {
-      _localDstorage.addAll({key: r.value});
-    });
+    if (r.value != null && r.value!.isNotEmpty)
+      setState(() {
+        _localDstorage.addAll({key: r.value!});
+      });
   }
 
   void _dbReadVal() async {
@@ -364,7 +367,7 @@ class AppStorageKitDemoState extends State<AppStorageKitDemo> {
       List<Map<String, dynamic>> vs =
           await _db.getRecords(where: 'id = ?', whereArgs: [key]);
 
-      String val = vs.length > 0 && vs.first != null ? vs.first['value'] : null;
+      String val = vs.length > 0 ? vs.first['value'] : null;
 
       setState(() {
         _dstorage.addAll({key: val});

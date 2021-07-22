@@ -3,8 +3,8 @@ import 'package:test/test.dart';
 
 void main() {
   group("App Storage Demo", () {
-    FlutterDriver driver;
-    TestingPageObj pageObj;
+    late FlutterDriver driver;
+    late TestingPageObj pageObj;
 
     setUpAll(() async {
       driver = await FlutterDriver.connect();
@@ -14,10 +14,8 @@ void main() {
     });
 
     tearDownAll(() async {
-      if (driver != null) {
-        await pageObj.clearAll();
-        driver.close();
-      }
+      await pageObj.clearAll();
+      driver.close();
     });
 
     test("Add new values to Storages", () async {

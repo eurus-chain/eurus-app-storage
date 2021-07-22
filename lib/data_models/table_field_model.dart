@@ -1,7 +1,7 @@
 class TableFieldModel {
-  TableFieldModel({this.name, this.type, this.isPK});
+  TableFieldModel({required this.name, required this.type, this.isPK});
 
   final String name;
   final String type;
-  final bool isPK;
+  final bool? isPK;
 }

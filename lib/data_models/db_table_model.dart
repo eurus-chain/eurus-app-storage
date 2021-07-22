@@ -1,22 +1,15 @@
-import 'package:flutter/material.dart';
-
 import 'table_field_model.dart';
 
 class DBTableModel {
   DBTableModel({
-    @required this.tableName,
-    @required this.fields,
-    this.orgFields,
+    required this.tableName,
+    required this.fields,
   });
 
   final String tableName;
   final List<TableFieldModel> fields;
 
-  /// Support only add new fields
-  @deprecated
-  final List<TableFieldModel> orgFields;
-
-  String orgTableQuery;
+  String? orgTableQuery;
 
   String get tableQuery => _genCreateTableQuery();
   String get migrateQuery => _genMigrateQuery();
@@ -64,21 +57,23 @@ class DBTableModel {
   Map<String, String> _decodeOrgFields() {
     Map<String, String> fieldList = {};
 
-    RegExp onlyFieldsExp = RegExp(r'\((.+)\)');
-    var onlyFieldsMatchs = onlyFieldsExp.allMatches(orgTableQuery);
+    if (orgTableQuery != null) {
+      RegExp onlyFieldsExp = RegExp(r'\((.+)\)');
+      var onlyFieldsMatchs = onlyFieldsExp.allMatches(orgTableQuery!);
 
-    String match = onlyFieldsMatchs.elementAt(0).group(1);
+      String match = onlyFieldsMatchs.elementAt(0).group(1) ?? '';
 
-    match = match.replaceAll(' PRIMARY KEY', '');
+      match = match.replaceAll(' PRIMARY KEY', '');
 
-    RegExp removeTypeExp = RegExp(r'\s[A-Z]+');
-    String removedTypes = match.replaceAll(removeTypeExp, '');
+      RegExp removeTypeExp = RegExp(r'\s[A-Z]+');
+      String removedTypes = match.replaceAll(removeTypeExp, '');
 
-    List<String> fields = removedTypes.split(' ,');
+      List<String> fields = removedTypes.split(' ,');
 
-    fields.forEach((e) {
-      fieldList.addAll({e: e});
-    });
+      fields.forEach((e) {
+        fieldList.addAll({e: e});
+      });
+    }
 
     return fieldList;
   }

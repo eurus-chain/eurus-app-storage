@@ -17,9 +17,9 @@ class NormalStorageKit {
   ///
   /// Return [value] in [String] if value was found
   /// Return [null] if is empty
-  Future<String> readValue(String key) async {
+  Future<String?> readValue(String key) async {
     final SharedPreferences prefs = await _prefs;
-    String value = prefs.getString(key);
+    String? value = prefs.getString(key);
 
     return value;
   }

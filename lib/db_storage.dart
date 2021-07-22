@@ -3,14 +3,14 @@ import 'package:app_storage_kit/data_models/db_table_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseStorageKit {
-  static Database _db;
-  static String _dbPath;
+  static Database? _db;
+  static late String _dbPath;
 
   final DBTableModel table;
 
   bool get dbReady => _db != null;
 
-  DatabaseStorageKit({this.table});
+  DatabaseStorageKit({required this.table});
 
   /// Initialize Database
   Future<Null> initDB() async {
@@ -24,7 +24,8 @@ class DatabaseStorageKit {
     bool createSuccess = true;
     if (await _ckTableExists()) return createSuccess;
     try {
-      await _db.execute(table.tableQuery);
+      if (!dbReady) await initDB();
+      await _db!.execute(table.tableQuery);
     } catch (e, t) {
       print("$e - $t");
       createSuccess = false;
@@ -34,7 +35,9 @@ class DatabaseStorageKit {
 
   /// Check if Table already created
   Future<bool> _ckTableExists() async {
-    List<Map<String, dynamic>> response = await _db.query("sqlite_master",
+    if (!dbReady) await initDB();
+
+    List<Map<String, dynamic>> response = await _db!.query("sqlite_master",
         where: 'type = ? AND name = ?', whereArgs: ['table', table.tableName]);
 
     if (response.length <= 0) return false;
@@ -45,21 +48,23 @@ class DatabaseStorageKit {
     return true;
   }
 
-  Future<bool> _udpateTable(String orgTableQuery) async {
+  Future<bool> _udpateTable(String? orgTableQuery) async {
+    if (!dbReady) await initDB();
+
     String tempOldTableName = 'old_${table.tableName}';
     table..orgTableQuery = orgTableQuery;
 
     try {
-      await _db.execute('DROP TABLE $tempOldTableName');
+      await _db!.execute('DROP TABLE $tempOldTableName');
     } catch (e) {
       // print('$e - $t');
     }
 
-    await _db
+    await _db!
         .execute('ALTER TABLE ${table.tableName} RENAME TO $tempOldTableName');
-    await _db.execute(table.tableQuery);
-    await _db.execute(table.migrateQuery);
-    await _db.execute('DROP TABLE $tempOldTableName');
+    await _db!.execute(table.tableQuery);
+    await _db!.execute(table.migrateQuery);
+    await _db!.execute('DROP TABLE $tempOldTableName');
 
     return true;
   }
@@ -67,18 +72,20 @@ class DatabaseStorageKit {
   /// Set / update record
   Future<int> setRecord(
     DBRecord r, {
-    bool updateIfExists,
-    ConflictAlgorithm conflictAlgorithm,
+    bool? updateIfExists,
+    ConflictAlgorithm? conflictAlgorithm,
   }) async {
     if (!dbReady) await initDB();
-    int response = await _db.insert(
+    int response = await _db!.insert(
       table.tableName,
       r.toJson(),
       conflictAlgorithm: conflictAlgorithm != null
           ? conflictAlgorithm
-          : updateIfExists == false
-              ? ConflictAlgorithm.ignore
-              : ConflictAlgorithm.replace,
+          : updateIfExists == null
+              ? null
+              : updateIfExists == false
+                  ? ConflictAlgorithm.ignore
+                  : ConflictAlgorithm.replace,
     );
 
     return response;
@@ -86,15 +93,15 @@ class DatabaseStorageKit {
 
   /// Read records
   Future<List<Map<String, dynamic>>> getRecords({
-    String where,
-    List<dynamic> whereArgs,
-    int limit,
-    int offset,
-    String order,
+    String? where,
+    List<dynamic>? whereArgs,
+    int? limit,
+    int? offset,
+    String? order,
   }) async {
     if (!dbReady) await initDB();
 
-    List<Map<String, dynamic>> records = await _db.query(
+    List<Map<String, dynamic>> records = await _db!.query(
       table.tableName,
       where: where,
       whereArgs: whereArgs,
@@ -107,25 +114,25 @@ class DatabaseStorageKit {
   }
 
   /// Delete record
-  Future<int> deleteRecord({String where, List<dynamic> whereArgs}) async {
+  Future<int> deleteRecord({String? where, List<dynamic>? whereArgs}) async {
     if (!dbReady) await initDB();
 
     int response =
-        await _db.delete(table.tableName, where: where, whereArgs: whereArgs);
+        await _db!.delete(table.tableName, where: where, whereArgs: whereArgs);
 
     return response;
   }
 
   /// Clear records from table
   Future<int> clearTable() async {
-    int response = await _db.delete(table.tableName);
+    int response = await _db!.delete(table.tableName);
 
     return response;
   }
 
   /// Drop table
   Future<void> dropTable() async {
-    await _db.execute("DROP TABLE IF EXISTS ${table.tableName}");
+    await _db!.execute("DROP TABLE IF EXISTS ${table.tableName}");
     return;
   }
 }

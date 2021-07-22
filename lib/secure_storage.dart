@@ -14,9 +14,9 @@ class SecureStorageKit {
   ///
   /// Reture [value] in [String] if value was found
   /// Return [null] if is empty
-  Future<String> readValue(String key) async {
+  Future<String?> readValue(String key) async {
     final FlutterSecureStorage storage = FlutterSecureStorage();
-    String value = await storage.read(key: key);
+    String? value = await storage.read(key: key);
     return value;
   }
 
