@@ -3,6 +3,8 @@ abstract class DBRecord {
 
   final dynamic id;
 
+  DBRecord.fromJson(Map<String, dynamic> r) : id = r['id'];
+
   Map<String, dynamic> toJson() {
     return Map<String, dynamic>();
   }
