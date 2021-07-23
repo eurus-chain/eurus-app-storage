@@ -367,11 +367,12 @@ class AppStorageKitDemoState extends State<AppStorageKitDemo> {
       List<Map<String, dynamic>> vs =
           await _db.getRecords(where: 'id = ?', whereArgs: [key]);
 
-      String val = vs.length > 0 ? vs.first['value'] : null;
+      String? val = vs.length > 0 ? vs.first['value'] : null;
 
-      setState(() {
-        _dstorage.addAll({key: val});
-      });
+      if (val != null)
+        setState(() {
+          _dstorage.addAll({key: val});
+        });
     });
   }
 
