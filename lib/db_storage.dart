@@ -81,11 +81,9 @@ class DatabaseStorageKit {
       r.toJson(),
       conflictAlgorithm: conflictAlgorithm != null
           ? conflictAlgorithm
-          : updateIfExists == null
-              ? null
-              : updateIfExists == false
-                  ? ConflictAlgorithm.ignore
-                  : ConflictAlgorithm.replace,
+          : updateIfExists == false
+              ? ConflictAlgorithm.ignore
+              : ConflictAlgorithm.replace,
     );
 
     return response;
