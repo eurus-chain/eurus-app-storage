@@ -4,7 +4,7 @@ class SecureStorageKit {
   /// Write a [String] variable [val] to Secure Storage with the key [key]
   ///
   /// Return [true] after writing the variable to Secure Storage
-  Future<bool> setValue(String val, String key) async {
+  Future<bool> setValue(String? val, String key) async {
     final FlutterSecureStorage storage = FlutterSecureStorage();
     await storage.write(key: key, value: val);
     return true;
