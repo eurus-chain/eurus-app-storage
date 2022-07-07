@@ -9,9 +9,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_secure_storage: ^4.2.0
-  shared_preferences: ^2.0.6
-  sqflite: ^2.0.0+3
+  flutter_secure_storage: ^5.0.2
+  shared_preferences: ^2.0.15
+  sqflite: ^2.0.3
 
 dev_dependencies:
   flutter_test:
